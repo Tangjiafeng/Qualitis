@@ -1,0 +1,88 @@
+spring:
+  datasource:
+    username: default
+    password: default
+    url: jdbc:mysql://127.0.0.1:3306/qualitis_cdh_dev?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 20
+      maximum-pool-size: 500
+      idle-timeout: 60000
+      max-lifetime: 180000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: false
+
+restTemplate:
+  thread:
+    maxTotal: 200 # max thread number
+    maxPerRoute: 100 # max concurrent thread per route
+
+  request:
+    socketTimeout: 10000 # the max time waiting for response
+    connectTimeout: 2000 # the max time waiting for shaking hand
+    connectionRequestTimeout: 2000 # the max time waiting for getting connection from connection pool
+
+task:
+  persistent:
+    type: jdbc
+    username: default
+    password: default
+    address: jdbc:mysql://127.0.0.1:3306/qualitis_cdh_dev?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf-8
+    tableName: qualitis_application_task_result
+  execute:
+    limit_thread: 10
+    rule_size: 10
+
+timer:
+  thread:
+    size: 5
+  check:
+    period: 10000
+  lock:
+    zk:
+      path: /qualitis/tmp/monitor
+
+zk:
+  address: 127.0.0.1
+  base_sleep_time: 1000
+  max_retries: 3
+  session_time_out: 10000
+  connection_time_out: 15000
+  lock_wait_time: 3
+
+auth:
+  unFilterUrls:
+    - /qualitis/api/v1/login/local
+    - /qualitis/api/v1/logout
+    - /qualitis/api/v1/redirect
+  uploadUrls:
+    - /qualitis/api/v1/projector/rule/batch/upload/*
+    - /qualitis/api/v1/projector/project/batch/upload*
+
+linkis:
+  api:
+    prefix: api/rest_j/v1
+    submitJob: entrance/execute
+    status: jobhistory/{id}/get
+    runningLog: entrance/{id}/log
+    finishLog: filesystem/openLog
+    meta_data:
+      db_path: datasource/dbs
+      table_path: datasource/tables
+      table_comment: datasource/getTableBaseInfo
+      column_path: datasource/columns
+      column_info: datasource/getTableFieldsInfo
+  spark:
+    application:
+      name: IDE
+  log:
+    maskKey: task.persistent.username, task.persistent.password
+
+front_end:
+  home_page: http://127.0.0.1:8090/#/dashboard
+  domain_name: http://127.0.0.1:8090
